@@ -1,10 +1,12 @@
+import os
 from setuptools import setup, find_packages
+from dotenv import load_dotenv, find_dotenv
 
-__version__ = "0.1"
+load_dotenv(find_dotenv(filename='.flaskenv'))
 
 setup(
     name="{{cookiecutter.app_name}}",
-    version=__version__,
+    version=os.getenv('VERSION'),
     packages=find_packages(exclude=["tests"]),
     install_requires=[
         "flask",

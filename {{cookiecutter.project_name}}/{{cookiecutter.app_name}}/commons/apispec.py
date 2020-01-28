@@ -3,6 +3,7 @@ from apispec import APISpec
 from apispec.exceptions import APISpecError
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
+from {{cookiecutter.app_name}}.config import VERSION
 
 
 class FlaskRestfulPlugin(FlaskPlugin):
@@ -41,7 +42,7 @@ class APISpecExt:
 
     def init_app(self, app, **kwargs):
         app.config.setdefault("APISPEC_TITLE", "{{cookiecutter.project_name}}")
-        app.config.setdefault("APISPEC_VERSION", "1.0.0")
+        app.config.setdefault("APISPEC_VERSION", VERSION)
         app.config.setdefault("OPENAPI_VERSION", "3.0.2")
         app.config.setdefault("SWAGGER_JSON_URL", "/swagger.json")
         app.config.setdefault("SWAGGER_UI_URL", "/swagger-ui")
