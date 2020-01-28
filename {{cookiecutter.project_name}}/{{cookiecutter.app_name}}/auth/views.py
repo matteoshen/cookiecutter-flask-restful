@@ -32,11 +32,11 @@ def login():
               properties:
                 username:
                   type: string
-                  example: myuser
+                  example: admin
                   required: true
                 password:
                   type: string
-                  example: P4$$w0rd!
+                  example: admin
                   required: true
       responses:
         200:
