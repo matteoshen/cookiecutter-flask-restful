@@ -3,6 +3,8 @@
 Use env var to override
 """
 import os
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv('.flaskenv'))
 
 ENV = os.getenv("FLASK_ENV")
 DEBUG = ENV == "development"
