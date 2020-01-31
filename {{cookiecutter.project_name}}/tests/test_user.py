@@ -34,6 +34,18 @@ def test_get_user(client, db, user, admin_headers):
     assert data["active"] == user.active
 
 
+def test_get_user_no_token(client, no_token_header):
+    # test no token
+    rep = client.get(f"/api/v{VERSION[0]}/users", headers=no_token_header)
+    assert rep.status_code == 401
+
+
+def test_get_user_fake_token(client, fake_token_header):
+    # test fake token
+    rep = client.get(f"/api/v{VERSION[0]}/users", headers=fake_token_header)
+    assert rep.status_code == 422
+
+
 def test_put_user(client, db, user, admin_headers):
     # test 404
     rep = client.put(f"/api/v{VERSION[0]}/users/100000", headers=admin_headers)

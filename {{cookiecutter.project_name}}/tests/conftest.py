@@ -75,3 +75,18 @@ def admin_refresh_headers(admin_user, client):
         'content-type': 'application/json',
         'authorization': 'Bearer %s' % tokens['refresh_token']
     }
+
+
+@pytest.fixture
+def no_token_header(client):
+    return {
+        'content-type': 'application/json',
+    }
+
+
+@pytest.fixture
+def fake_token_header(client):
+    return {
+        'content-type': 'application/json',
+        'authorization': 'Bearer shenshenehss'
+    }

@@ -1,5 +1,6 @@
 from {{cookiecutter.app_name}}.config import VERSION
 
+
 def test_revoke_access_token(client, admin_headers):
     resp = client.delete("/auth/revoke_access", headers=admin_headers)
     assert resp.status_code == 200
