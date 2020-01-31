@@ -10,6 +10,7 @@ class User(db.Model):
     username_cn = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey("role.id"), nullable=False)
     active = db.Column(db.Boolean, default=True)
 
     def __init__(self, **kwargs):
@@ -18,3 +19,16 @@ class User(db.Model):
 
     def __repr__(self):
         return "<User %s>" % self.username
+
+
+class Role(db.Model):
+    """Basic role model
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    role_name = db.Column(db.String(80), unique=True, nullable=False)
+    role_name_cn = db.Column(db.String(80), unique=True, nullable=False)
+    users = db.relationship("User", backref="role", lazy=True)
+
+    def __repr__(self):
+        return "<Role %s>" % self.role_name

@@ -2,28 +2,21 @@ from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
 
-from myapi.models import User
+from myapi.models import Role
 from myapi.extensions import ma, db
 from myapi.commons.pagination import paginate
 
 
-class UserSchema(ma.ModelSchema):
+class RoleSchema(ma.ModelSchema):
 
     id = ma.Int(dump_only=True)
-    password = ma.String(load_only=True, required=True)
 
     class Meta:
-        model = User
+        model = Role
         sqla_session = db.session
-        include_fk = True
-        exclude = tuple(
-            prop.key
-            for prop in User.__mapper__.iterate_properties
-            if hasattr(prop, "direction")
-        )
 
 
-class UserResource(Resource):
+class RoleResource(Resource):
     """Single object resource
 
     ---
@@ -32,7 +25,7 @@ class UserResource(Resource):
         - api
       parameters:
         - in: path
-          name: user_id
+          name: role_id
           schema:
             type: integer
       responses:
@@ -42,22 +35,22 @@ class UserResource(Resource):
               schema:
                 type: object
                 properties:
-                  user: UserSchema
+                  role: RoleSchema
         404:
-          description: user does not exists
+          description: role does not exists
     put:
       tags:
         - api
       parameters:
         - in: path
-          name: user_id
+          name: role_id
           schema:
             type: integer
       requestBody:
         content:
           application/json:
             schema:
-              UserSchema
+              RoleSchema
       responses:
         200:
           content:
@@ -67,16 +60,16 @@ class UserResource(Resource):
                 properties:
                   msg:
                     type: string
-                    example: user updated
-                  user: UserSchema
+                    example: role updated
+                  role: RoleSchema
         404:
-          description: user does not exists
+          description: role does not exists
     delete:
       tags:
         - api
       parameters:
         - in: path
-          name: user_id
+          name: role_id
           schema:
             type: integer
       responses:
@@ -88,36 +81,36 @@ class UserResource(Resource):
                 properties:
                   msg:
                     type: string
-                    example: user deleted
+                    example: role deleted
         404:
-          description: user does not exists
+          description: role does not exists
     """
 
     method_decorators = [jwt_required]
 
-    def get(self, user_id):
-        schema = UserSchema()
-        user = User.query.get_or_404(user_id)
-        return {"user": schema.dump(user)}
+    def get(self, role_id):
+        schema = RoleSchema()
+        role = Role.query.get_or_404(role_id)
+        return {"role": schema.dump(role)}
 
-    def put(self, user_id):
-        schema = UserSchema(partial=True)
-        user = User.query.get_or_404(user_id)
-        user = schema.load(request.json, instance=user)
+    def put(self, role_id):
+        schema = RoleSchema(partial=True)
+        role = Role.query.get_or_404(role_id)
+        role = schema.load(request.json, instance=role)
 
         db.session.commit()
 
-        return {"msg": "user updated", "user": schema.dump(user)}
+        return {"msg": "role updated", "role": schema.dump(role)}
 
-    def delete(self, user_id):
-        user = User.query.get_or_404(user_id)
-        db.session.delete(user)
+    def delete(self, role_id):
+        role = Role.query.get_or_404(role_id)
+        db.session.delete(role)
         db.session.commit()
 
-        return {"msg": "user deleted"}
+        return {"msg": "role deleted"}
 
 
-class UserList(Resource):
+class RoleList(Resource):
     """Creation and get_all
 
     ---
@@ -136,7 +129,7 @@ class UserList(Resource):
                       results:
                         type: array
                         items:
-                          $ref: '#/components/schemas/UserSchema'
+                          $ref: '#/components/schemas/RoleSchema'
     post:
       tags:
         - api
@@ -144,7 +137,7 @@ class UserList(Resource):
         content:
           application/json:
             schema:
-              UserSchema
+              RoleSchema
       responses:
         201:
           content:
@@ -154,22 +147,22 @@ class UserList(Resource):
                 properties:
                   msg:
                     type: string
-                    example: user created
-                  user: UserSchema
+                    example: role created
+                  role: RoleSchema
     """
 
     method_decorators = [jwt_required]
 
     def get(self):
-        schema = UserSchema(many=True)
-        query = User.query
+        schema = RoleSchema(many=True)
+        query = Role.query
         return paginate(query, schema)
 
     def post(self):
-        schema = UserSchema()
-        user = schema.load(request.json)
+        schema = RoleSchema()
+        role = schema.load(request.json)
 
-        db.session.add(user)
+        db.session.add(role)
         db.session.commit()
 
-        return {"msg": "user created", "user": schema.dump(user)}, 201
+        return {"msg": "role created", "role": schema.dump(role)}, 201
