@@ -180,3 +180,6 @@ ENV/
 
 # idea
 .idea/
+
+# vscode
+.vscode/
