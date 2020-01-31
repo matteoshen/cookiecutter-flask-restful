@@ -165,8 +165,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# default restful_api
-restful_api
 # dotenv
 .env
 
