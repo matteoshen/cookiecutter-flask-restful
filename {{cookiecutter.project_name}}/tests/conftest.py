@@ -29,6 +29,7 @@ def db(app):
 def admin_user(db):
     user = User(
         username='admin',
+        username_cn='系统管理员',
         email='admin@admin.com',
         password='admin'
     )

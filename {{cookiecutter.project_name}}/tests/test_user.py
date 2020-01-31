@@ -9,6 +9,7 @@ from {{cookiecutter.app_name}}.config import VERSION
 class UserFactory(factory.Factory):
 
     username = factory.Sequence(lambda n: "user%d" % n)
+    username_cn = factory.Sequence(lambda n: "用户%d" % n)
     email = factory.Sequence(lambda n: "user%d@mail.com" % n)
     password = "mypwd"
 
@@ -30,6 +31,7 @@ def test_get_user(client, db, user, admin_headers):
 
     data = rep.get_json()["user"]
     assert data["username"] == user.username
+    assert data["username_cn"] == user.username_cn
     assert data["email"] == user.email
     assert data["active"] == user.active
 
@@ -62,6 +64,7 @@ def test_put_user(client, db, user, admin_headers):
 
     data = rep.get_json()["user"]
     assert data["username"] == "updated"
+    assert data["username_cn"] == user.username_cn
     assert data["email"] == user.email
     assert data["active"] == user.active
 
@@ -87,6 +90,7 @@ def test_create_user(client, db, admin_headers):
     rep = client.post(f"/api/v{VERSION[0]}/users", json=data, headers=admin_headers)
     assert rep.status_code == 400
 
+    data["username_cn"] = "创建"
     data["password"] = "admin"
     data["email"] = "create@mail.com"
 
@@ -97,6 +101,7 @@ def test_create_user(client, db, admin_headers):
     user = db.session.query(User).filter_by(id=data["user"]["id"]).first()
 
     assert user.username == "created"
+    assert user.username_cn == "创建"
     assert user.email == "create@mail.com"
 
 
