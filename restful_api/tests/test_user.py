@@ -12,6 +12,7 @@ class UserFactory(factory.Factory):
     username_cn = factory.Sequence(lambda n: "用户%d" % n)
     email = factory.Sequence(lambda n: "user%d@mail.com" % n)
     password = "mypwd"
+    role_id = 1
 
     class Meta:
         model = User
@@ -34,6 +35,7 @@ def test_get_user(client, db, user, admin_headers):
     assert data["username_cn"] == user.username_cn
     assert data["email"] == user.email
     assert data["active"] == user.active
+    assert data["role_id"] == user.role_id
 
 
 def test_get_user_no_token(client, no_token_header):
@@ -66,6 +68,7 @@ def test_put_user(client, db, user, admin_headers):
     assert data["username"] == "updated"
     assert data["username_cn"] == user.username_cn
     assert data["email"] == user.email
+    assert data["role_id"] == user.role_id
     assert data["active"] == user.active
 
 
@@ -93,6 +96,7 @@ def test_create_user(client, db, admin_headers):
     data["username_cn"] = "创建"
     data["password"] = "admin"
     data["email"] = "create@mail.com"
+    data["role_id"] = 1
 
     rep = client.post(f"/api/v{VERSION[0]}/users", json=data, headers=admin_headers)
     assert rep.status_code == 201
@@ -103,6 +107,7 @@ def test_create_user(client, db, admin_headers):
     assert user.username == "created"
     assert user.username_cn == "创建"
     assert user.email == "create@mail.com"
+    assert user.role_id == 1
 
 
 def test_get_all_user(client, db, user_factory, admin_headers):
