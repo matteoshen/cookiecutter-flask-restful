@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import IntegrityError
 
 from myapi.models import Role
 from myapi.extensions import ma, db
@@ -8,7 +9,6 @@ from myapi.commons.pagination import paginate
 
 
 class RoleSchema(ma.ModelSchema):
-
     id = ma.Int(dump_only=True)
 
     class Meta:
@@ -103,10 +103,14 @@ class RoleResource(Resource):
         return {"msg": "role updated", "role": schema.dump(role)}
 
     def delete(self, role_id):
-        role = Role.query.get_or_404(role_id)
-        db.session.delete(role)
-        db.session.commit()
-
+        try:
+            role = Role.query.get_or_404(role_id)
+            db.session.delete(role)
+            db.session.commit()
+        except IntegrityError:
+            return {"msg": "role in use"}, 600  # 外键约束
+        except Exception as e:
+            raise e
         return {"msg": "role deleted"}
 
 

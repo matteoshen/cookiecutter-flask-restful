@@ -26,9 +26,9 @@ class Role(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(80), unique=True, nullable=False)
-    role_name_cn = db.Column(db.String(80), unique=True, nullable=False)
+    rolename = db.Column(db.String(80), unique=True, nullable=False)
+    rolename_cn = db.Column(db.String(80), unique=True, nullable=False)
     users = db.relationship("User", backref="role", lazy=True)
 
     def __repr__(self):
-        return "<Role %s>" % self.role_name
+        return "<Role %s>" % self.rolename
