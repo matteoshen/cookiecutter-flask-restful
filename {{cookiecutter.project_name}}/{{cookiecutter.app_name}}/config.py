@@ -5,7 +5,7 @@ Use env var to override
 import os
 from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(find_dotenv('.flaskenv'))
+load_dotenv(find_dotenv(".flaskenv"))
 
 VERSION = os.getenv("VERSION")
 ENV = os.getenv("FLASK_ENV")
