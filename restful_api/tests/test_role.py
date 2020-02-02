@@ -1,34 +1,21 @@
 import factory
 from pytest_factoryboy import register
 
-from myapi.models import User, Role
+from myapi.models import Role
 from myapi.config import VERSION
 
 
 @register
 class RoleFactory(factory.Factory):
 
-    rolename = factory.Sequence(lambda n: "role%d" % n)
-    rolename_cn = factory.Sequence(lambda n: "角色%d" % n)
+    rolename = factory.Sequence(lambda n: f"role{n}")
+    rolename_cn = factory.Sequence(lambda n: f"角色{n}")
 
     class Meta:
         model = Role
 
 
-@register
-class UserFactory(factory.Factory):
-
-    username = factory.Sequence(lambda n: "user%d" % n)
-    username_cn = factory.Sequence(lambda n: "用户%d" % n)
-    email = factory.Sequence(lambda n: "user%d@mail.com" % n)
-    role_id = factory.Sequence(lambda n: n)
-    password = "mypwd"
-
-    class Meta:
-        model = User
-
-
-def test_get_role(client, db, role, admin_headers):
+def test_get_role(client, db, role, admin_headers, normal_headers):
     # test 404
     rep = client.get(f"/api/v{VERSION[0]}/roles/100000", headers=admin_headers)
     assert rep.status_code == 404
@@ -44,6 +31,10 @@ def test_get_role(client, db, role, admin_headers):
     assert data["rolename"] == role.rolename
     assert data["rolename_cn"] == role.rolename_cn
 
+    # test get_role without access role
+    rep = client.get(f"/api/v{VERSION[0]}/roles/{role.id}", headers=normal_headers)
+    assert rep.status_code == 401
+
 
 def test_get_role_no_token(client, no_token_header):
     # test no token
@@ -57,7 +48,7 @@ def test_get_role_fake_token(client, fake_token_header):
     assert rep.status_code == 422
 
 
-def test_put_role(client, db, role, admin_headers):
+def test_put_role(client, db, role, admin_headers, normal_headers):
     # test 404
     rep = client.put(f"/api/v{VERSION[0]}/roles/100000", headers=admin_headers)
     assert rep.status_code == 404
@@ -68,15 +59,19 @@ def test_put_role(client, db, role, admin_headers):
     data = {"rolename": "updated"}
 
     # test update role
-    rep = client.put(f"/api/v{VERSION[0]}/roles/%d" % role.id, json=data, headers=admin_headers)
+    rep = client.put(f"/api/v{VERSION[0]}/roles/{role.id}", json=data, headers=admin_headers)
     assert rep.status_code == 200
 
     data = rep.get_json()["role"]
     assert data["rolename"] == "updated"
     assert data["rolename_cn"] == role.rolename_cn
 
+    # test update role without access role
+    rep = client.put(f"/api/v{VERSION[0]}/roles/{role.id}", json=data, headers=normal_headers)
+    assert rep.status_code == 401
 
-def test_delete_role_in_use(client, db, role, role_factory, admin_headers):
+
+def test_delete_role_in_use(client, db, role, admin_headers):
     # test 404
     rep = client.delete(f"/api/v{VERSION[0]}/roles/100000", headers=admin_headers)
     assert rep.status_code == 404
@@ -90,7 +85,7 @@ def test_delete_role_in_use(client, db, role, role_factory, admin_headers):
     assert rep.status_code == 600
 
 
-def test_delete_role(client, db, role, role_factory, admin_headers):
+def test_delete_role(client, db, role_factory, admin_headers, normal_headers):
     # test delete role
     roles = role_factory.create_batch(10)
 
@@ -102,8 +97,12 @@ def test_delete_role(client, db, role, role_factory, admin_headers):
     assert rep.status_code == 200
     assert db.session.query(Role).filter_by(id=role_id).first() is None
 
+    # test update role without access role
+    rep = client.delete(f"/api/v{VERSION[0]}/roles/{role_id}", headers=normal_headers)
+    assert rep.status_code == 401
 
-def test_create_role(client, db, admin_headers):
+
+def test_create_role(client, db, admin_headers, normal_headers):
     # test bad data
     data = {"rolename": "created"}
     rep = client.post(f"/api/v{VERSION[0]}/roles", json=data, headers=admin_headers)
@@ -120,8 +119,13 @@ def test_create_role(client, db, admin_headers):
     assert role.rolename == "created"
     assert role.rolename_cn == "创建"
 
+    # test create role without access role
+    data = {"rolename": "created"}
+    rep = client.post(f"/api/v{VERSION[0]}/roles", json=data, headers=normal_headers)
+    assert rep.status_code == 401
 
-def test_get_all_role(client, db, role_factory, admin_headers):
+
+def test_get_all_role(client, db, role_factory, admin_headers, normal_headers):
     roles = role_factory.create_batch(30)
 
     db.session.add_all(roles)
@@ -133,3 +137,7 @@ def test_get_all_role(client, db, role_factory, admin_headers):
     results = rep.get_json()
     for role in roles:
         assert any(u["id"] == role.id for u in results["results"])
+
+    # test get all role without access role
+    rep = client.get(f"/api/v{VERSION[0]}/roles", headers=normal_headers)
+    assert rep.status_code == 401
