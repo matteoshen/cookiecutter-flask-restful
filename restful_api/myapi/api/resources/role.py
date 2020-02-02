@@ -1,11 +1,12 @@
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
 from sqlalchemy.exc import IntegrityError
 
 from myapi.models import Role
 from myapi.extensions import ma, db
 from myapi.commons.pagination import paginate
+from myapi.decorators import role_required
+from myapi.config import ADMIN_ROLE_ID
 
 
 class RoleSchema(ma.ModelSchema):
@@ -86,7 +87,7 @@ class RoleResource(Resource):
           description: role does not exists
     """
 
-    method_decorators = [jwt_required]
+    method_decorators = [role_required(ADMIN_ROLE_ID)]
 
     def get(self, role_id):
         schema = RoleSchema()
@@ -155,7 +156,7 @@ class RoleList(Resource):
                   role: RoleSchema
     """
 
-    method_decorators = [jwt_required]
+    method_decorators = [role_required(ADMIN_ROLE_ID)]
 
     def get(self):
         schema = RoleSchema(many=True)

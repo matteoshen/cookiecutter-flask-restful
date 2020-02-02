@@ -1,10 +1,11 @@
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
 
 from myapi.models import User
 from myapi.extensions import ma, db
 from myapi.commons.pagination import paginate
+from myapi.decorators import role_required
+from myapi.config import ADMIN_ROLE_ID
 
 
 class UserSchema(ma.ModelSchema):
@@ -93,7 +94,7 @@ class UserResource(Resource):
           description: user does not exists
     """
 
-    method_decorators = [jwt_required]
+    method_decorators = [role_required(ADMIN_ROLE_ID)]
 
     def get(self, user_id):
         schema = UserSchema()
@@ -158,7 +159,7 @@ class UserList(Resource):
                   user: UserSchema
     """
 
-    method_decorators = [jwt_required]
+    method_decorators = [role_required(ADMIN_ROLE_ID)]
 
     def get(self):
         schema = UserSchema(many=True)
