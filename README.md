@@ -35,7 +35,6 @@ Used packages :
 * [dotenv](https://github.com/theskumar/python-dotenv)
 * [apispec](https://github.com/marshmallow-code/apispec)
 
-
 ## Usage
 
 * [Installation](#installation)
@@ -48,6 +47,7 @@ Used packages :
 * [Using Docker](#using-docker)
 * [Makefile](#makefile-usage)
 * [APISpec and swagger](#using-apispec-and-swagger)
+* [Test](#test)
 * [Changelog](#changelog)
 
 
@@ -324,6 +324,30 @@ This come with a very simple extension that allow you to override basic settings
 * `SWAGGER_JSON_URL`: Url for your JSON specifications, default to `/swagger.json`
 * `SWAGGER_UI_URL`: Url for swagger-ui, default to `/swagger-ui`
 * `SWAGGER_URL_PREFIX`: URL prefix to use for swagger blueprint, default to `None`
+
+## Test
+
+Tox is used for automate test, test under different python versions is configured in tox.ini. One should pay attention usage with pyenv, a .python-version file should specify (with prioirty) python versions used in tox.
+
+example of .python-version
+
+```bash
+restful_api
+3.6.10
+3.8.1
+```
+
+tox parallel
+
+```bash
+tox -p all
+```
+
+tox lint with black and flake8
+
+```bash
+tox -e lint
+```
 
 ## Changelog
 

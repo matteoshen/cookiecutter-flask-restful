@@ -1,0 +1,5 @@
+pytest
+pytest-flask
+pytest-runner
+pytest-factoryboy
+factory_boy
