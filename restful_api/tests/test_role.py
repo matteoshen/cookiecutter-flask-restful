@@ -71,17 +71,13 @@ def test_put_role(client, db, role, admin_headers, normal_headers):
     assert rep.status_code == 401
 
 
-def test_delete_role_in_use(client, db, role, admin_headers):
+def test_delete_role_in_use(client, db, admin_headers, admin_user):
     # test 404
     rep = client.delete(f"/api/v{VERSION[0]}/roles/100000", headers=admin_headers)
     assert rep.status_code == 404
 
-    db.session.add(role)
-    db.session.commit()
-    role_id = role.id
-
     # test delete role in use
-    rep = client.delete(f"/api/v{VERSION[0]}/roles/{role_id}", headers=admin_headers)
+    rep = client.delete(f"/api/v{VERSION[0]}/roles/{admin_user.role_id}", headers=admin_headers)
     assert rep.status_code == 600
 
 

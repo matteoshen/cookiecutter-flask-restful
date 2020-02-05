@@ -126,6 +126,17 @@ def test_create_user(client, db, admin_headers, normal_headers):
     rep = client.post(f"/api/v{VERSION[0]}/users", json=data, headers=normal_headers)
     assert rep.status_code == 401
 
+    # test create user without existing role
+    data = {
+        "username": "created",
+        "username_cn": "创建",
+        "password": "create",
+        "email": "create@create.com",
+        "role_id": 3,
+    }
+    rep = client.post(f"/api/v{VERSION[0]}/users", json=data, headers=admin_headers)
+    assert rep.status_code == 500
+
 
 def test_get_all_user(client, db, user_factory, admin_headers, normal_headers):
     users = user_factory.create_batch(30)

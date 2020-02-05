@@ -20,6 +20,14 @@ def init():
     from myapi.extensions import db
     from myapi.models import User, Role
 
+    click.echo("create role")
+    role_admins = Role(rolename="admins", rolename_cn="系统管理员角色",)
+    role_normals = Role(rolename="normals", rolename_cn="普通用户角色",)
+    db.session.add(role_admins)
+    db.session.add(role_normals)
+    db.session.commit()
+    click.echo("created role admins, normals")
+
     click.echo("create user")
     user_admin = User(
         username="admin",
@@ -42,14 +50,6 @@ def init():
     db.session.add(user_test)
     db.session.commit()
     click.echo("created user admin, normal")
-
-    click.echo("create role")
-    role_admins = Role(rolename="admins", rolename_cn="系统管理员角色",)
-    role_normals = Role(rolename="normals", rolename_cn="普通用户角色",)
-    db.session.add(role_admins)
-    db.session.add(role_normals)
-    db.session.commit()
-    click.echo("created role admins, normals")
 
 
 if __name__ == "__main__":

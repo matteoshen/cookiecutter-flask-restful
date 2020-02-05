@@ -1,7 +1,7 @@
 import json
 import pytest
 
-from myapi.models import User
+from myapi.models import User, Role
 from myapi.app import create_app
 from myapi.extensions import db as _db
 
@@ -35,6 +35,12 @@ def admin_user(db):
         role_id=1
     )
 
+    role = Role(
+        rolename='admins',
+        rolename_cn='管理员角色'
+    )
+
+    db.session.add(role)
     db.session.add(user)
     db.session.commit()
 
@@ -51,6 +57,12 @@ def normal_user(db):
         role_id=2
     )
 
+    role = Role(
+        rolename='normals',
+        rolename_cn='普通用户角色'
+    )
+
+    db.session.add(role)
     db.session.add(user)
     db.session.commit()
 
