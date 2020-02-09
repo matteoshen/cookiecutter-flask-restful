@@ -10,7 +10,7 @@ wait_for_line () {
 }
 
 # Start Temperory MySQL process
-MYSQL_DATA="/tmp/mysql-toxusage"
+MYSQL_DATA=$1
 mkdir -p ${MYSQL_DATA} && mysqld --initialize --datadir=${MYSQL_DATA} && mkfifo ${MYSQL_DATA}/out
 mysqld --datadir=${MYSQL_DATA} \
     --pid-file=${MYSQL_DATA}/mysql.pid \

@@ -1,4 +1,4 @@
-.PHONY: init init-migration build run db-migrate test tox mysql-create mysql-cleanup
+.PHONY: init init-migration build run db-migrate test tox 
 
 init:  build run
 	docker-compose exec web myapi db upgrade
@@ -25,9 +25,3 @@ tox:
 
 lint:
 	docker-compose run web tox -e lint
-
-mysql-create:
-	mysql/create-instance.sh
-
-mysql-cleanup:
-	mysql/cleanup.sh
