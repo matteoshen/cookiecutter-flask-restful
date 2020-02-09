@@ -7,4 +7,3 @@ default_context:
     admin_user_password: "admin"
     use_celery: "no"
     wsgi_server: "gunicorn"
-    db: "sqlite"

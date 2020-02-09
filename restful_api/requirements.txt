@@ -12,5 +12,5 @@ apispec[yaml]
 apispec-webframeworks
 tox
 gunicorn
-cryptography
 pymysql
+cryptography

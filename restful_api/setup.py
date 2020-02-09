@@ -20,6 +20,7 @@ setup(
         "passlib",
         "apispec[yaml]",
         "apispec-webframeworks",
+        "pymysql",
     ],
     entry_points={
         "console_scripts": [

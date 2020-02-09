@@ -3,7 +3,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.exceptions import HTTPException
 
 from myapi.models import User
-from myapi.config import DEBUG, TEST
+from myapi.config import DEBUG
 from myapi.extensions import db
 
 
@@ -41,7 +41,7 @@ def error_handler(f):
         try:
             return f(*args, **kwargs)
         except Exception as e:
-            if DEBUG or TEST:
+            if DEBUG:
                 raise e
             elif type(e).__bases__[0] == HTTPException:
                 return f(*args, **kwargs)
