@@ -1,7 +1,9 @@
 from functools import wraps
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from werkzeug.exceptions import HTTPException
 
 from myapi.models import User
+from myapi.config import DEBUG, TEST
 from myapi.extensions import db
 
 
@@ -28,3 +30,22 @@ def role_required(access_role):
         return decorated
 
     return _role_required
+
+
+def error_handler(f):
+    """Handle errors
+    """
+
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            if DEBUG or TEST:
+                raise e
+            elif type(e).__bases__[0] == HTTPException:
+                return f(*args, **kwargs)
+            else:
+                return {"msg": type(e).__name__}, 500
+
+    return decorated

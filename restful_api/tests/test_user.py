@@ -1,4 +1,5 @@
 import factory
+import pytest
 from pytest_factoryboy import register
 
 from myapi.models import User
@@ -65,7 +66,9 @@ def test_put_user(client, db, user, admin_headers, normal_headers):
     data = {"username": "updated"}
 
     # test update user
-    rep = client.put(f"/api/v{VERSION[0]}/users/{user.id}", json=data, headers=admin_headers)
+    rep = client.put(
+        f"/api/v{VERSION[0]}/users/{user.id}", json=data, headers=admin_headers
+    )
     assert rep.status_code == 200
 
     data = rep.get_json()["user"]
@@ -76,7 +79,9 @@ def test_put_user(client, db, user, admin_headers, normal_headers):
     assert data["active"] == user.active
 
     # test update user without access role
-    rep = client.put(f"/api/v{VERSION[0]}/users/{user.id}", json=data, headers=normal_headers)
+    rep = client.put(
+        f"/api/v{VERSION[0]}/users/{user.id}", json=data, headers=normal_headers
+    )
     assert rep.status_code == 401
 
 
@@ -128,14 +133,15 @@ def test_create_user(client, db, admin_headers, normal_headers):
 
     # test create user without existing role
     data = {
-        "username": "created",
-        "username_cn": "创建",
-        "password": "create",
-        "email": "create@create.com",
+        "username": "created2",
+        "username_cn": "创建2",
+        "password": "create2",
+        "email": "create2@create2.com",
         "role_id": 3,
     }
-    rep = client.post(f"/api/v{VERSION[0]}/users", json=data, headers=admin_headers)
-    assert rep.status_code == 500
+    with pytest.raises(Exception) as e_info:
+        client.post(f"/api/v{VERSION[0]}/users", json=data, headers=admin_headers)
+    assert "a foreign key constraint fails" in e_info.value.args[0]
 
 
 def test_get_all_user(client, db, user_factory, admin_headers, normal_headers):

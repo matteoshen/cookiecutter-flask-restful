@@ -1,12 +1,10 @@
 from flask import request
-from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
 from myapi.models import Role
 from myapi.extensions import ma, db
 from myapi.commons.pagination import paginate
-from myapi.decorators import role_required
-from myapi.config import ADMIN_ROLE_ID
+from myapi.resource import AdminResource
 
 
 class RoleSchema(ma.ModelSchema):
@@ -17,7 +15,7 @@ class RoleSchema(ma.ModelSchema):
         sqla_session = db.session
 
 
-class RoleResource(Resource):
+class RoleResource(AdminResource):
     """Single object resource
 
     ---
@@ -87,8 +85,6 @@ class RoleResource(Resource):
           description: role does not exists
     """
 
-    method_decorators = [role_required(ADMIN_ROLE_ID)]
-
     def get(self, role_id):
         schema = RoleSchema()
         role = Role.query.get_or_404(role_id)
@@ -115,7 +111,7 @@ class RoleResource(Resource):
         return {"msg": "role deleted"}
 
 
-class RoleList(Resource):
+class RoleList(AdminResource):
     """Creation and get_all
 
     ---
@@ -155,8 +151,6 @@ class RoleList(Resource):
                     example: role created
                   role: RoleSchema
     """
-
-    method_decorators = [role_required(ADMIN_ROLE_ID)]
 
     def get(self):
         schema = RoleSchema(many=True)

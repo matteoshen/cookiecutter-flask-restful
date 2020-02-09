@@ -1,11 +1,9 @@
 from flask import request
-from flask_restful import Resource
 
 from myapi.models import User
 from myapi.extensions import ma, db
 from myapi.commons.pagination import paginate
-from myapi.decorators import role_required
-from myapi.config import ADMIN_ROLE_ID
+from myapi.resource import AdminResource
 
 
 class UserSchema(ma.ModelSchema):
@@ -24,7 +22,7 @@ class UserSchema(ma.ModelSchema):
         )
 
 
-class UserResource(Resource):
+class UserResource(AdminResource):
     """Single object resource
 
     ---
@@ -94,8 +92,6 @@ class UserResource(Resource):
           description: user does not exists
     """
 
-    method_decorators = [role_required(ADMIN_ROLE_ID)]
-
     def get(self, user_id):
         schema = UserSchema()
         user = User.query.get_or_404(user_id)
@@ -118,7 +114,7 @@ class UserResource(Resource):
         return {"msg": "user deleted"}
 
 
-class UserList(Resource):
+class UserList(AdminResource):
     """Creation and get_all
 
     ---
@@ -158,8 +154,6 @@ class UserList(Resource):
                     example: user created
                   user: UserSchema
     """
-
-    method_decorators = [role_required(ADMIN_ROLE_ID)]
 
     def get(self):
         schema = UserSchema(many=True)
