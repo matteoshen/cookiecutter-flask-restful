@@ -7,4 +7,3 @@ default_context:
     admin_user_password: "{{ cookiecutter.admin_user_password }}"
     use_celery: "{{ cookiecutter.use_celery }}"
     wsgi_server: "{{ cookiecutter.wsgi_server }}"
-    db: "{{ cookiecutter.db }}"

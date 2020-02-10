@@ -20,9 +20,7 @@ setup(
         "passlib",
         "apispec[yaml]",
         "apispec-webframeworks",
-        {%- if cookiecutter.db == "mysql" %}
         "pymysql",
-        {%- endif %}
     ],
     entry_points={
         "console_scripts": [

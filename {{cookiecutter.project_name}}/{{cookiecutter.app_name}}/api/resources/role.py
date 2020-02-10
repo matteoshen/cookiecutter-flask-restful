@@ -1,9 +1,9 @@
 from flask import request
 
-from myapi.models import Role
-from myapi.extensions import ma, db
-from myapi.commons.pagination import paginate
-from myapi.resource import AdminResource
+from {{cookiecutter.app_name}}.models import Role
+from {{cookiecutter.app_name}}.extensions import ma, db
+from {{cookiecutter.app_name}}.commons.pagination import paginate
+from {{cookiecutter.app_name}}.resource import AdminResource
 
 
 class RoleSchema(ma.ModelSchema):

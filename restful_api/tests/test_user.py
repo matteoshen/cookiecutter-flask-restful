@@ -4,6 +4,7 @@ from pytest_factoryboy import register
 
 from myapi.models import User
 from myapi.config import VERSION
+from sqlalchemy.exc import IntegrityError
 
 
 @register
@@ -139,7 +140,7 @@ def test_create_user(client, db, admin_headers, normal_headers):
         "email": "create2@create2.com",
         "role_id": 3,
     }
-    with pytest.raises(Exception) as e_info:
+    with pytest.raises(IntegrityError) as e_info:
         client.post(f"/api/v{VERSION[0]}/users", json=data, headers=admin_headers)
     assert "a foreign key constraint fails" in e_info.value.args[0]
 

@@ -2,8 +2,8 @@ import factory
 import pytest
 from pytest_factoryboy import register
 
-from myapi.models import Role
-from myapi.config import VERSION
+from {{cookiecutter.app_name}}.models import Role
+from {{cookiecutter.app_name}}.config import VERSION
 from sqlalchemy.exc import IntegrityError
 
 

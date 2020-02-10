@@ -1,10 +1,9 @@
 from flask import request
-from flask_restful import Resource
-from flask_jwt_extended import jwt_required
 
 from {{cookiecutter.app_name}}.models import User
 from {{cookiecutter.app_name}}.extensions import ma, db
 from {{cookiecutter.app_name}}.commons.pagination import paginate
+from {{cookiecutter.app_name}}.resource import AdminResource
 
 
 class UserSchema(ma.ModelSchema):
@@ -15,9 +14,15 @@ class UserSchema(ma.ModelSchema):
     class Meta:
         model = User
         sqla_session = db.session
+        include_fk = True
+        exclude = tuple(
+            prop.key
+            for prop in User.__mapper__.iterate_properties
+            if hasattr(prop, "direction")
+        )
 
 
-class UserResource(Resource):
+class UserResource(AdminResource):
     """Single object resource
 
     ---
@@ -87,8 +92,6 @@ class UserResource(Resource):
           description: user does not exists
     """
 
-    method_decorators = [jwt_required]
-
     def get(self, user_id):
         schema = UserSchema()
         user = User.query.get_or_404(user_id)
@@ -111,7 +114,7 @@ class UserResource(Resource):
         return {"msg": "user deleted"}
 
 
-class UserList(Resource):
+class UserList(AdminResource):
     """Creation and get_all
 
     ---
@@ -151,8 +154,6 @@ class UserList(Resource):
                     example: user created
                   user: UserSchema
     """
-
-    method_decorators = [jwt_required]
 
     def get(self):
         schema = UserSchema(many=True)

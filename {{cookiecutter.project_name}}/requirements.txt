@@ -20,6 +20,5 @@ uwsgi
 {%- if cookiecutter.wsgi_server == "gunicorn" %}
 gunicorn
 {%- endif %}
-{%- if cookiecutter.db == "mysql" %}
 pymysql
-{%- endif %}
+cryptography
